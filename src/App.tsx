@@ -1,6 +1,6 @@
 import { useState, useRef } from 'react';
 import ImageSelector from './components/ImageSelector';
-import MemeCanvas from './components/MemeCanvas';
+import InteractiveCanvas from './components/InteractiveCanvas';
 import TextBox from './components/TextBox';
 import DownloadButton from './components/DownloadButton';
 import { TextBox as TextBoxType } from './types';
@@ -11,12 +11,13 @@ function App() {
   const [textBoxes, setTextBoxes] = useState<TextBoxType[]>([
     { id: '1', text: '', fontSize: 40, x: 0, y: 0, textColor: '#ffffff', borderColor: '#000000' },
   ]);
+  const [selectedTextBoxId, setSelectedTextBoxId] = useState<string | null>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   const handleImageSelect = (url: string) => {
     setImageUrl(url);
+    setSelectedTextBoxId(null);
     // Reset text boxes when new image is loaded
-    // Wait for image to load to get dimensions
     const img = new Image();
     img.onload = () => {
       setTextBoxes([
@@ -37,7 +38,6 @@ function App() {
   const handleAddTextBox = () => {
     if (!imageUrl) return;
 
-    // Get image dimensions to set default position
     const img = new Image();
     img.onload = () => {
       const newTextBox: TextBoxType = {
@@ -50,6 +50,7 @@ function App() {
         borderColor: '#000000',
       };
       setTextBoxes([...textBoxes, newTextBox]);
+      setSelectedTextBoxId(newTextBox.id);
     };
     img.src = imageUrl;
   };
@@ -61,17 +62,24 @@ function App() {
   const handleDeleteTextBox = (id: string) => {
     if (textBoxes.length > 1) {
       setTextBoxes(textBoxes.filter((tb) => tb.id !== id));
+      if (selectedTextBoxId === id) {
+        setSelectedTextBoxId(null);
+      }
     }
+  };
+
+  const handleTextBoxSelect = (id: string | null) => {
+    setSelectedTextBoxId(id);
   };
 
   // Get canvas dimensions for text box positioning
   const getCanvasDimensions = () => {
     if (!imageUrl) return { width: 0, height: 0 };
-    const canvas = document.querySelector('.meme-canvas') as HTMLCanvasElement;
+    const canvas = canvasRef.current;
     if (canvas) {
       return { width: canvas.width, height: canvas.height };
     }
-    return { width: 800, height: 600 }; // Default fallback
+    return { width: 800, height: 600 };
   };
 
   const { width: canvasWidth, height: canvasHeight } = getCanvasDimensions();
@@ -79,7 +87,7 @@ function App() {
   return (
     <div className="app">
       <header className="app-header">
-        <h1>Meme Generator</h1>
+        <h1>🎨 Meme Generator</h1>
       </header>
 
       <div className="app-content">
@@ -108,6 +116,8 @@ function App() {
                     onDelete={() => handleDeleteTextBox(textBox.id)}
                     canvasWidth={canvasWidth}
                     canvasHeight={canvasHeight}
+                    isSelected={textBox.id === selectedTextBoxId}
+                    onSelect={() => handleTextBoxSelect(textBox.id)}
                   />
                 ))}
               </div>
@@ -118,7 +128,14 @@ function App() {
         </aside>
 
         <main className="canvas-area">
-          <MemeCanvas ref={canvasRef} imageUrl={imageUrl} textBoxes={textBoxes} />
+          <InteractiveCanvas
+            ref={canvasRef}
+            imageUrl={imageUrl}
+            textBoxes={textBoxes}
+            onTextBoxUpdate={handleUpdateTextBox}
+            onTextBoxSelect={handleTextBoxSelect}
+            selectedTextBoxId={selectedTextBoxId}
+          />
         </main>
       </div>
     </div>

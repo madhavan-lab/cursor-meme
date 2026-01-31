@@ -6,6 +6,8 @@ interface TextBoxProps {
   onDelete: () => void;
   canvasWidth: number;
   canvasHeight: number;
+  isSelected?: boolean;
+  onSelect?: () => void;
 }
 
 export default function TextBox({
@@ -14,6 +16,8 @@ export default function TextBox({
   onDelete,
   canvasWidth,
   canvasHeight,
+  isSelected = false,
+  onSelect,
 }: TextBoxProps) {
   const handleTextChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     onUpdate({ ...textBox, text: e.target.value });
@@ -49,9 +53,13 @@ export default function TextBox({
   };
 
   return (
-    <div className="text-box-controls">
+    <div 
+      className={`text-box-controls ${isSelected ? 'selected' : ''}`}
+      onClick={onSelect}
+      style={{ cursor: onSelect ? 'pointer' : 'default' }}
+    >
       <div className="text-box-header">
-        <h3>Text Box</h3>
+        <h3>Text Box {isSelected && '✓'}</h3>
         <button onClick={onDelete} className="delete-btn" type="button">
           Delete
         </button>

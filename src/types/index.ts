@@ -4,8 +4,11 @@ export interface TextBox {
   fontSize: number;
   x: number;
   y: number;
+  width?: number;
+  height?: number;
   textColor: string;
   borderColor: string;
+  isSelected?: boolean;
 }
 
 export interface AppState {
