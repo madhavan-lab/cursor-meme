@@ -1,0 +1,105 @@
+---
+alwaysApply: true
+---
+# Styling Guidelines
+Do not use purple/blue gradients or colors as the primary color.
+
+## CSS Organization
+
+- Use separate CSS files for component-specific styles
+- Keep global styles in `index.css` or `App.css`
+- Group related styles together with comments
+- Use consistent spacing and indentation (2 spaces)
+
+## Naming Conventions
+
+Use BEM-like naming with kebab-case:
+
+```css
+/* ✅ GOOD */
+.app-header { }
+.text-box-controls { }
+.upload-label { }
+.upload-label:hover { }
+
+/* ❌ BAD */
+.appHeader { }
+.textBoxControls { }
+.upload_label { }
+```
+
+## Best Practices
+
+### Avoid Inline Styles
+
+```tsx
+// ❌ BAD
+<div style={{ color: 'red', padding: '10px' }}>
+
+// ✅ GOOD
+<div className="error-message">
+```
+
+### Use CSS Classes
+
+- Prefer CSS classes over inline styles
+- Use semantic class names that describe purpose, not appearance
+- Group related styles logically
+
+### Responsive Design
+
+Always include responsive breakpoints:
+
+```css
+/* ✅ GOOD */
+@media (max-width: 1024px) {
+  .app-content {
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 768px) {
+  .app-header {
+    padding: 1rem;
+  }
+}
+```
+
+### Transitions and Interactions
+
+Add smooth transitions for interactive elements:
+
+```css
+/* ✅ GOOD */
+.upload-label {
+  transition: background-color 0.2s;
+}
+
+.upload-label:hover {
+  background-color: #2980b9;
+}
+```
+
+### Color Usage
+
+- Use consistent color palette
+- Define colors with hex values or CSS variables
+- Use semantic color names in comments if needed
+
+### Spacing
+
+- Use rem units for spacing (padding, margin)
+- Maintain consistent spacing scale (0.5rem, 0.75rem, 1rem, 1.5rem, 2rem)
+- Use flexbox/grid gaps for component spacing
+
+### Focus States
+
+Always include focus states for accessibility:
+
+```css
+/* ✅ GOOD */
+.url-input:focus {
+  outline: none;
+  border-color: #3498db;
+}
+```
